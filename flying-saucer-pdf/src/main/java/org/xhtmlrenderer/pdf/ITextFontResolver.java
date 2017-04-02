@@ -34,6 +34,8 @@ import org.xhtmlrenderer.util.XRLog;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 public class ITextFontResolver implements FontResolver {
@@ -197,6 +199,8 @@ public class ITextFontResolver implements FontResolver {
                         String encoding, boolean embedded, String pathToPFB)
             throws DocumentException, IOException {
         String lower = path.toLowerCase();
+
+
         if (lower.endsWith(".otf") || lower.endsWith(".ttf") || lower.indexOf(".ttc,") != -1) {
             BaseFont font = BaseFont.createFont(path, encoding, embedded);
 
@@ -255,7 +259,16 @@ public class ITextFontResolver implements FontResolver {
     private void addFontFaceFont(
             String fontFamilyNameOverride, IdentValue fontWeightOverride, IdentValue fontStyleOverride, String uri, String encoding, boolean embedded, byte[] afmttf, byte[] pfb)
             throws DocumentException, IOException {
-        String lower = uri.toLowerCase();
+
+        String fontPath = uri;
+        try {
+            uri = new URI(uri).getPath();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        String lower = fontPath.toLowerCase();
+
         if (lower.endsWith(".otf") || lower.endsWith(".ttf") || lower.indexOf(".ttc,") != -1) {
             BaseFont font = BaseFont.createFont(uri, encoding, embedded, false, afmttf, pfb);
 
